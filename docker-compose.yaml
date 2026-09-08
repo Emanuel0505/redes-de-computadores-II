@@ -20,6 +20,8 @@ services:
     volumes:
       - ./server2/templates:/etc/nginx/templates:ro #ro: é read online
       - ./server2/static:/var/www/html:ro
+    environment:
+      - ROOT=/var/www/html
     command: ["nginx", '-g', 'daemon off;']
 
 
