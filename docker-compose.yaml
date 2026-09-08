@@ -1,5 +1,6 @@
 services: 
   server1-proxy:
+    container_name: redes
     image: nginx:latest
     ports: 
       - "8081:80"
@@ -8,6 +9,7 @@ services:
       - ./server1-proxy/templates:/etc/nginx/templates:ro #ro: é read online
     environment:
       - ROOT=/var/www/html
+    command: ["nginx", '-g', 'daemon off;']
 
 
   server2:
