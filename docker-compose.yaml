@@ -1,8 +1,26 @@
 services: 
-  nginx:
+  server1-proxy:
     image: nginx:latest
     ports: 
-      - "8080:80"
+      - "8081:80"
+    working_dir: /var/www/html
     volumes:
-      - ./nginx:/etc/nginx
+      - ./server1-proxy/templates:/etc/nginx/templates:ro #ro: é read online
+    environment:
+      - ROOT=/var/www/html
+
+
+  server2:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    working_dir: /var/www/html
+    volumes:
+      - ./server2/templates:/etc/nginx/templates:ro #ro: é read online
+      - ./server2/static:/var/www/html:ro
+    command: ["nginx", '-g', 'daemon off;']
+
+
+
+
     
