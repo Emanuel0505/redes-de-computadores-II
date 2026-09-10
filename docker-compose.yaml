@@ -1,28 +1,24 @@
 services: 
   server1-proxy:
     container_name: redes
-    image: nginx:latest
+    image: httpd:latest
     ports: 
       - "8081:80"
-    working_dir: /var/www/html
+    working_dir: /usr/local/apache2 
     volumes:
-      - ./server1-proxy/templates:/etc/nginx/templates:ro #ro: é read online
-    environment:
-      - ROOT=/var/www/html
-    command: ["nginx", '-g', 'daemon off;']
+      - ./server1-proxy/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro 
+      - ./server1-proxy/extra:/usr/local/apache2/conf/extra:ro #ro: é read only
+      - ./server1-proxy/static:/usr/local/apache2/htdocs:ro 
 
 
   server2:
-    image: nginx:latest
+    image: httpd:latest
     ports:
       - "8080:80"
-    working_dir: /var/www/html
+    working_dir: /usr/local/apache2
     volumes:
-      - ./server2/templates:/etc/nginx/templates:ro #ro: é read online
-      - ./server2/static:/var/www/html:ro
-    environment:
-      - ROOT=/var/www/html
-    command: ["nginx", '-g', 'daemon off;']
+      - ./server2/static:/usr/local/apache2/htdocs:ro 
+    
 
 
 
