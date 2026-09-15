@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Cascadia+Code:ital,wght@0,200..700;1,200..700&display=swap');
+
+body {
+    background-color: black;
+    color: white;
+    font-family: 'Cascadia Code', monospace;
+    display: flex-box;
+}
+header{
+    border-bottom: 1px solid whitesmoke;
+    margin: 0px;
+    padding: 0px;
+}
+.botao{
+    background-color: rgba(31, 119, 235, 0.74);
+    border: 0;
+    border-radius: 2px;
+    margin-top: 2px;
+    color: white;
+    font-size: large;
+}
