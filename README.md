@@ -1,11 +1,5 @@
 # redes-de-computadores-II
 Utilizado para realizar projetos da matéria de redes na UFRN.
-## Aula 2 
-
-- `doker --help`;
-- `doker run --help`;
-- https://hub.docker.com/;
-- `docker pull --help`;
 
 # Organizando o apache:
 ## Criar arquivo de configuração do proxy:
@@ -16,16 +10,20 @@ docker run --rm httpd:latest cat /usr/local/apache2/conf/httpd.conf > ./server1-
 ```
 
 ### Organizando o proxy no httpd.conf
-Tem que retirar `#` no arquvio desses modulos:
+Tem que retirar `#` no arquvio.
+#### Padrão
 ```apache
 LoadModule headers_module modules/mod_headers.so
 LoadModule proxy_module modules/mod_proxy.so
 LoadModule proxy_http_module modules/mod_proxy_http.so
 ```
-Colocar no final do arquivo:
+__Colocar no final do arquivo__:
 ```apache
 Include conf/extra/my-proxy.conf
 ```
+
+#### Balanceamento de Carga
+
 
  
 # Materiais de Estuddos

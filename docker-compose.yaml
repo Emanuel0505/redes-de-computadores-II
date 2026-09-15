@@ -3,23 +3,34 @@ services:
     container_name: redes
     image: httpd:latest
     ports: 
-      - "8081:80"
+      - "8081:8084"
     working_dir: /usr/local/apache2 
     volumes:
       - ./server1-proxy/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro 
       - ./server1-proxy/extra:/usr/local/apache2/conf/extra:ro #ro: é read only
       - ./server1-proxy/static:/usr/local/apache2/htdocs:ro 
+    depends_on:
+      - server2
+      - server3
 
 
   server2:
     image: httpd:latest
     ports:
-      - "8080:80"
+      - "8080:8083"
     working_dir: /usr/local/apache2
     volumes:
+      - ./server2/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
       - ./server2/static:/usr/local/apache2/htdocs:ro 
     
 
+  server3:
+    image: httpd:latest
+    ports:
+      - "8082:80"
+    working_dir: /usr/local/apache2
+    volumes:
+      - ./server3/static:/usr/local/apache2/htdocs:ro
 
 
 
