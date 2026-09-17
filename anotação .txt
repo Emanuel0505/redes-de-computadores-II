@@ -1,0 +1,111 @@
+Quero aprender, de forma prática e didática, como funciona e como configurar um ambiente de DNS + Reverse Proxy + servidores web usando Docker Compose.
+
+Estou estudando redes e reverse proxy. Já fiz um laboratório usando Docker Compose com:
+
+1 container funcionando como reverse proxy
+
+2 containers funcionando como servidores web
+
+Agora quero aprender a configurar um servidor DNS usando CoreDNS em outro container.
+
+Meu objetivo é entender como construir uma arquitetura semelhante a:
+
+                    Internet
+                       │
+                       ▼
+                 ┌──────────────┐
+                 │ Reverse Proxy│
+                 │    :80/:443  │
+                 └──────┬───────┘
+                        │
+               ┌────────┴────────┐
+               ▼                 ▼
+          ┌──────────┐      ┌──────────┐
+          │   Web 1  │      │   Web 2  │
+          │   :80    │      │   :80    │
+          └──────────┘      └──────────┘
+
+                    DNS
+                     ▲
+                     │
+                ┌────┴─────┐
+                │ CoreDNS  │
+                │   :53    │
+                └──────────┘
+
+
+Quero especificamente aprender a fazer o CoreDNS ser responsável pela resolução DNS, em vez de depender da resolução de nomes fornecida pelo Docker.
+
+Quero entender:
+
+Como instalar e configurar o CoreDNS dentro de um container.
+
+Como funciona o Corefile.
+
+Como criar registros DNS, por exemplo:
+
+proxy.lab → 172.20.0.10
+
+web1.lab → 172.20.0.11
+
+web2.lab → 172.20.0.12
+
+Como configurar uma rede Docker com IPs estáticos.
+
+Como fazer os outros containers utilizarem o CoreDNS como servidor DNS.
+
+Qual é a diferença entre:
+
+DNS interno do Docker
+
+CoreDNS
+
+/etc/hosts
+
+DNS externo como Cloudflare 1.1.1.1 e Google 8.8.8.8
+
+Como o DNS se relaciona com o reverse proxy.
+
+Como fazer o fluxo completo:
+
+cliente
+   ↓
+DNS
+   ↓
+IP do Reverse Proxy
+   ↓
+Reverse Proxy
+   ↓
+Web 1 / Web 2
+
+
+Quero que você ensine isso passo a passo, como um laboratório de redes.
+
+Não quero apenas receber um docker-compose.yml pronto. Quero entender o motivo de cada configuração.
+
+Podemos começar criando uma estrutura mínima com:
+
+coredns
+proxy
+web1
+web2
+
+
+usando uma rede, por exemplo:
+
+172.20.0.0/24
+
+
+com:
+
+CoreDNS → 172.20.0.2
+Proxy   → 172.20.0.10
+Web 1   → 172.20.0.11
+Web 2   → 172.20.0.12
+
+
+Depois quero testar a resolução DNS a partir dos containers e verificar o caminho das requisições.
+
+Também quero que você explique eventuais limitações dessa abordagem. Por exemplo, se usar IPs estáticos dentro do Docker é uma boa prática ou se existem maneiras melhores de fazer isso em ambientes reais.
+
+Importante: trate isso como um curso prático. Comece pelo conceito e depois faça uma pequena implementação. Só avance para a próxima etapa depois de explicar o que estamos fazendo.
