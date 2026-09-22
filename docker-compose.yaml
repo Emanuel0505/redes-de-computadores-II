@@ -1,3 +1,9 @@
+networks:
+  lab_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
 services: 
   server1-proxy:
     container_name: redes
@@ -12,7 +18,17 @@ services:
     depends_on:
       - server2
       - server3
-
+  server-dns:
+    container_name: dns
+    image: ubuntu/bind9:latest
+    environment:
+      - BIND9_USER=bind
+    volumes:
+      - ./server-dns/named.conf:/etc/bind/named.conf:ro
+      - ./server-dns/db.lab:/etc/bind/db.lab:ro
+    networks:
+      lab_net:
+        ipv4_address: 172.20.0.2
 
   server2:
     image: httpd:latest
