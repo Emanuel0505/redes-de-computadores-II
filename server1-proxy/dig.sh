@@ -1,0 +1,1 @@
+docker compose exec server1-proxy bash -c "apt-get update && apt-get install dnsutils -y && dig web1.lb && dig web2.lb"

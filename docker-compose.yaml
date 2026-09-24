@@ -18,6 +18,8 @@ services:
     depends_on:
       - server2
       - server3
+    dns: 172.20.0.2
+
   server-dns:
     container_name: dns
     image: ubuntu/bind9:latest
