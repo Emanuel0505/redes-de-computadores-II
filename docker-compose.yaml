@@ -43,7 +43,9 @@ services:
     volumes:
       - ./server2/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
       - ./server2/static:/usr/local/apache2/htdocs:ro 
-    
+    networks:
+      lab_net: 
+        ipv4_address: 172.20.0.11
 
   server3:
     image: httpd:latest
@@ -52,7 +54,9 @@ services:
     working_dir: /usr/local/apache2
     volumes:
       - ./server3/static:/usr/local/apache2/htdocs:ro
-
+    networks:
+      lab_net: 
+        ipv4_address: 172.20.0.12
 
 
     
