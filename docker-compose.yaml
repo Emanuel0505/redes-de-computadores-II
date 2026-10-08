@@ -4,7 +4,24 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/24
+          ip_range: 172.20.0.128/25
+          gateway: 172.20.0.1
 services: 
+  server-dhcp:
+    container_name: dhcp
+    image: dockurr/dnsmasq:latest
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./server-dhcp/dnsmasq.d/:/etc/dnsmasq.d/:ro
+      - ./server-dhcp/leases/:/var/lib/dnsmasq/
+    network_mode: host
+    networks:
+      lab_net:
+        ipv4_address: 172.20.0.3
+      
+    
   server1-proxy:
     container_name: redes
     image: httpd:latest
@@ -34,6 +51,23 @@ services:
     networks:
       lab_net:
         ipv4_address: 172.20.0.2
+  
+  server-dns2:
+    container_name: dns
+    image: dockurr/dnsmasq:latest
+    environment:
+      DNS1: "1.0.0.1"
+      DNS2: "1.1.1.1"
+    ports:
+      - "5354:53/udp"
+      - "5354:53/tcp"
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./server-dns2/named.conf:/etc/dnsmasq.d/:ro
+    networks:
+      lab_net:
+        ipv4_address: 172.20.0.3
 
   server2:
     image: httpd:latest
