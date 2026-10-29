@@ -13,7 +13,8 @@ services:
       - NET_ADMIN
     volumes:
       - ./server-dhcp/dinamic-hosts:/etc/dnsmasq.d/dinamic-hosts:rw
-      - ./server-dhcp/dnsmasq.conf/:/etc/dnsmasq.conf:ro
+      - ./server-dhcp/dnsmasq.conf:/etc/dnsmasq.conf:ro
+      - ./server-dhcp/order.sh:/etc/dnsmasq.d/order.sh:ro
     networks:
       lab_net:
         ipv4_address: 172.20.0.3
@@ -25,7 +26,7 @@ services:
     image: httpd:latest
     ports: 
       - "8081:8084"
-    entrypoint: "/dhcp/entrypoint.sh"
+    entrypoint: "entrypoint.sh"
     cap_add:
       - NET_ADMIN
     working_dir: /usr/local/apache2 
@@ -38,12 +39,13 @@ services:
       - server3
     networks:
       lab_net:
-    dns: 172.20.0.2
+    dns: 172.20.0.3
 
   server-dns:
     container_name: DNS2
     hostname: dns2
     image: ubuntu/bind9:latest
+    entrypoint: "entrypoint.sh"
     environment:
       - BIND9_USER=bind
     volumes:
@@ -57,7 +59,7 @@ services:
     image: httpd:latest
     ports:
       - "8080:8083"
-    entrypoint: "/dhcp/entrypoint.sh"
+    entrypoint: "entrypoint.sh"
     cap_add:
       - NET_ADMIN
     working_dir: /usr/local/apache2
@@ -72,7 +74,7 @@ services:
     image: httpd:latest
     ports:
       - "8082:80"
-    entrypoint: "/dhcp/entrypoint.sh"
+    entrypoint: "entrypoint.sh"
     cap_add:
       - NET_ADMIN
     working_dir: /usr/local/apache2

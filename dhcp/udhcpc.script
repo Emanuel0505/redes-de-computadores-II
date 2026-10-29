@@ -1,0 +1,9 @@
+#!/bin/sh
+case "$1" in
+  bound|renew)
+    ip addr add "$ip/$mask" dev "$interface" 2>/dev/null
+    echo "search ${domain:-lab}" > /etc/resolv.conf
+    for d in $dns; do echo "nameserver $d" >> /etc/resolv.conf; done
+    ;;
+esac
+exit 0
