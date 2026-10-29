@@ -7,9 +7,10 @@ networks:
 services: 
   server-dhcp:
     container_name: dhcp
+    hostname: dhcp-dns
     image: dockurr/dnsmasq:latest
     cap_add:
-      - NET_ADMIM
+      - NET_ADMIN
     volumes:
       - ./server-dhcp/dinamic-hosts:/etc/dnsmasq.d/dinamic-hosts:rw
       - ./server-dhcp/dnsmasq.conf/:/etc/dnsmasq.conf:ro
@@ -20,9 +21,13 @@ services:
     
   server1-proxy:
     container_name: redes
+    hostname: proxy
     image: httpd:latest
     ports: 
       - "8081:8084"
+    entrypoint: "/dhcp/entrypoint.sh"
+    cap_add:
+      - NET_ADMIN
     working_dir: /usr/local/apache2 
     volumes:
       - ./server1-proxy/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro 
@@ -32,11 +37,12 @@ services:
       - server2
       - server3
     networks:
-      lab-net:
+      lab_net:
     dns: 172.20.0.2
 
   server-dns:
-    container_name: dns
+    container_name: DNS2
+    hostname: dns2
     image: ubuntu/bind9:latest
     environment:
       - BIND9_USER=bind
@@ -44,44 +50,33 @@ services:
       - ./server-dns/named.conf:/etc/bind/named.conf:ro
       - ./server-dns/db.lab:/etc/bind/db.lab:ro
     networks:
-      lab-net:
-  
-  server-dns2:
-    container_name: dns
-    image: dockurr/dnsmasq:latest
-    environment:
-      DNS1: "1.0.0.1"
-      DNS2: "1.1.1.1"
-    ports:
-      - "5354:53/udp"
-      - "5354:53/tcp"
-    cap_add:
-      - NET_ADMIN
-    volumes:
-      - ./server-dns2/named.conf:/etc/dnsmasq.d/:ro
-    networks:
-      lab-net:
+      lab_net:
 
   server2:
+    hostname: server2
     image: httpd:latest
     ports:
       - "8080:8083"
+    entrypoint: "/dhcp/entrypoint.sh"
+    cap_add:
+      - NET_ADMIN
     working_dir: /usr/local/apache2
     volumes:
       - ./server2/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
       - ./server2/static:/usr/local/apache2/htdocs:ro 
     networks:
-      lab-net:
+      lab_net:
 
   server3:
+    hostname: server3
     image: httpd:latest
     ports:
       - "8082:80"
+    entrypoint: "/dhcp/entrypoint.sh"
+    cap_add:
+      - NET_ADMIN
     working_dir: /usr/local/apache2
     volumes:
       - ./server3/static:/usr/local/apache2/htdocs:ro
     networks:
-      lab-net:
-
-
-    
+      lab_net:
