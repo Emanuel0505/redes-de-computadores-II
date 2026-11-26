@@ -5,6 +5,9 @@ networks:
       config:
         - subnet: 172.20.0.0/25
 
+volumes:
+  avahi_socket:
+
 services:
   server-dhcp:
     container_name: dhcp
@@ -14,10 +17,30 @@ services:
       - NET_ADMIN
     volumes:
       - ./server-dhcp/dnsmasq.conf:/etc/dnsmasq.conf:ro
+      - ./server-dhcp/order.sh:/etc/dnsmasq.d/order.sh:ro
+      - ./server-mdns/allowlist:/etc/dnsmasq.d/mdns-allowlist:ro
+      - ./server-mdns/hosts:/etc/dnsmasq.d/mdns-hosts:rw
     restart: always
     networks:
       lab_net:
         ipv4_address: 172.20.0.3
+
+  server-mdns:
+    container_name: mdns
+    hostname: mdns
+    build: ./server-mdns
+    volumes:
+      - ./server-mdns/hosts:/etc/avahi/hosts:ro
+      - avahi_socket:/run/avahi-daemon
+    restart: always
+    networks:
+      lab_net:
+        ipv4_address: 172.20.0.4
+    healthcheck:
+      test: ["CMD-SHELL", "test -S /run/avahi-daemon/socket"]
+      interval: 1s
+      timeout: 1s
+      retries: 10
 
   server1-proxy:
     container_name: redes
@@ -35,10 +58,18 @@ services:
       - ./server1-proxy/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
       - ./server1-proxy/extra:/usr/local/apache2/conf/extra:ro
       - ./server1-proxy/static:/usr/local/apache2/htdocs:ro
+      - avahi_socket:/run/avahi-daemon:ro
     depends_on:
-      - server-dhcp
-      - server2
-      - server3
+      server-dhcp:
+        condition: service_started
+      server-mdns:
+        condition: service_healthy
+      server2:
+        condition: service_started
+      server3:
+        condition: service_started
+      server4:
+        condition: service_started
     networks:
       lab_net:
         ipv4_address: 172.20.0.7
@@ -61,6 +92,7 @@ services:
       - NET_ADMIN
     networks:
       lab_net:
+
   server3:
     hostname: server3
     build:
@@ -73,6 +105,25 @@ services:
     volumes:
       - ./server3/static:/usr/local/apache2/htdocs:ro
       - ./server3/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+    depends_on:
+      - server-dhcp
+    cap_add:
+      - NET_ADMIN
+    networks:
+      lab_net:
+
+  server4:
+    hostname: server4
+    build:
+      context: .
+      dockerfile: dockerfile-app-setup
+    ports:
+      - "8083:80"
+    command: ["httpd-foreground"]
+    working_dir: /usr/local/apache2
+    volumes:
+      - ./server4/static:/usr/local/apache2/htdocs:ro
+      - ./server4/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
     depends_on:
       - server-dhcp
     cap_add:

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server 2</title>
+</head>
+<body>
+    <h1>BEM VINDO AO SERVER 2</h1>
+    <table border="1" cellpadding="6">
+        <!--#config timefmt="%Y-%m-%dT%H:%M:%S%z" -->
+        <tr><td>Hostname</td><td><!--#echo var="HOSTNAME" --></td></tr>
+        <tr><td>IP do servidor</td><td><!--#echo var="SERVER_ADDR" --></td></tr>
+        <tr><td>Porta</td><td><!--#echo var="SERVER_PORT" --></td></tr>
+        <tr><td>server_name</td><td><!--#echo var="SERVER_NAME" --></td></tr>
+        <tr><td>Versão do servidor</td><td><!--#echo var="SERVER_SOFTWARE" --></td></tr>
+        <tr><td>Document root</td><td><!--#echo var="DOCUMENT_ROOT" --></td></tr>
+        <tr><td>Hora do servidor</td><td><!--#echo var="DATE_LOCAL" --></td></tr>
+        <!--#config timefmt="%Y-%m-%d %H:%M:%S GMT" -->
+        <tr><td>Hora (GMT)</td><td><!--#echo var="DATE_GMT" --></td></tr>
+    </table>
+
+    <h2>Cliente e requisição</h2>
+    <table border="1" cellpadding="6">
+        <tr><td>Seu IP (visto pelo servidor)</td><td><!--#echo var="REMOTE_ADDR" --></td></tr>
+        <tr><td>Porta de origem</td><td><!--#echo var="REMOTE_PORT" --></td></tr>
+        <tr><td>IP real (via proxy)</td><td><!--#echo var="HTTP_X_REAL_IP" --></td></tr>
+        <tr><td>X-Forwarded-For</td><td><!--#echo var="HTTP_X_FORWARDED_FOR" --></td></tr>
+        <tr><td>Host pedido</td><td><!--#echo var="HTTP_HOST" --></td></tr>
+        <tr><td>Método</td><td><!--#echo var="REQUEST_METHOD" --></td></tr>
+        <tr><td>URI</td><td><!--#echo var="REQUEST_URI" --></td></tr>
+        <tr><td>Protocolo</td><td><!--#echo var="SERVER_PROTOCOL" --></td></tr>
+        <tr><td>Navegador</td><td><!--#echo var="HTTP_USER_AGENT" --></td></tr>
+        <tr><td>Idioma</td><td><!--#echo var="HTTP_ACCEPT_LANGUAGE" --></td></tr>
+    </table>
+</body>
+</html>
