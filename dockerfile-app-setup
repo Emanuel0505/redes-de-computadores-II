@@ -1,0 +1,10 @@
+FROM httpd:2.4-bookworm
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      isc-dhcp-client iproute2 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

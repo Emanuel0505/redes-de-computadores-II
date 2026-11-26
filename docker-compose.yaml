@@ -3,8 +3,9 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/24
-services: 
+        - subnet: 172.20.0.0/25
+
+services:
   server-dhcp:
     container_name: dhcp
     hostname: dhcp-dns
@@ -12,73 +13,69 @@ services:
     cap_add:
       - NET_ADMIN
     volumes:
-      - ./server-dhcp/dinamic-hosts:/etc/dnsmasq.d/dinamic-hosts:rw
       - ./server-dhcp/dnsmasq.conf:/etc/dnsmasq.conf:ro
-      - ./server-dhcp/order.sh:/etc/dnsmasq.d/order.sh:ro
+    restart: always
     networks:
       lab_net:
         ipv4_address: 172.20.0.3
-      
-    
+
   server1-proxy:
     container_name: redes
     hostname: proxy
-    image: httpd:latest
-    ports: 
-      - "8081:8084"
-    entrypoint: "entrypoint.sh"
+    build:
+      context: .
+      dockerfile: dockerfile-app-setup
+    command: ["httpd-foreground"]
     cap_add:
       - NET_ADMIN
-    working_dir: /usr/local/apache2 
+    ports:
+      - "8081:8084"
+    working_dir: /usr/local/apache2
     volumes:
-      - ./server1-proxy/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro 
-      - ./server1-proxy/extra:/usr/local/apache2/conf/extra:ro #ro: é read only
-      - ./server1-proxy/static:/usr/local/apache2/htdocs:ro 
+      - ./server1-proxy/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./server1-proxy/extra:/usr/local/apache2/conf/extra:ro
+      - ./server1-proxy/static:/usr/local/apache2/htdocs:ro
     depends_on:
+      - server-dhcp
       - server2
       - server3
     networks:
       lab_net:
-    dns: 172.20.0.3
-
-  server-dns:
-    container_name: DNS2
-    hostname: dns2
-    image: ubuntu/bind9:latest
-    entrypoint: "entrypoint.sh"
-    environment:
-      - BIND9_USER=bind
-    volumes:
-      - ./server-dns/named.conf:/etc/bind/named.conf:ro
-      - ./server-dns/db.lab:/etc/bind/db.lab:ro
-    networks:
-      lab_net:
+        ipv4_address: 172.20.0.7
 
   server2:
     hostname: server2
-    image: httpd:latest
+    build:
+      context: .
+      dockerfile: dockerfile-app-setup
     ports:
       - "8080:8083"
-    entrypoint: "entrypoint.sh"
-    cap_add:
-      - NET_ADMIN
+    command: ["httpd-foreground"]
     working_dir: /usr/local/apache2
     volumes:
       - ./server2/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
-      - ./server2/static:/usr/local/apache2/htdocs:ro 
-    networks:
-      lab_net:
-
-  server3:
-    hostname: server3
-    image: httpd:latest
-    ports:
-      - "8082:80"
-    entrypoint: "entrypoint.sh"
+      - ./server2/static:/usr/local/apache2/htdocs:ro
+    depends_on:
+      - server-dhcp
     cap_add:
       - NET_ADMIN
+    networks:
+      lab_net:
+  server3:
+    hostname: server3
+    build:
+      context: .
+      dockerfile: dockerfile-app-setup
+    ports:
+      - "8082:80"
+    command: ["httpd-foreground"]
     working_dir: /usr/local/apache2
     volumes:
       - ./server3/static:/usr/local/apache2/htdocs:ro
+      - ./server3/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+    depends_on:
+      - server-dhcp
+    cap_add:
+      - NET_ADMIN
     networks:
       lab_net:
